@@ -17,12 +17,14 @@
 
 package com.aqlu.rocketmq.demo;
 
+import com.maihaoche.starter.mq.annotation.EnableMQConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * ConsumerApplication Created by aqlu on 2017/11/16.
  */
+@EnableMQConfiguration
 @SpringBootApplication
 public class ConsumerApplication {
 

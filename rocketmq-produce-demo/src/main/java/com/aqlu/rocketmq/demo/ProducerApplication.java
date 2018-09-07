@@ -1,21 +1,26 @@
 package com.aqlu.rocketmq.demo;
 
-import com.aqlu.rocketmq.demo.domain.OrderPaidEvent;
 import java.math.BigDecimal;
-import javax.annotation.Resource;
-import org.apache.rocketmq.spring.starter.core.RocketMQTemplate;
+
+import org.apache.rocketmq.common.message.Message;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.messaging.support.MessageBuilder;
+
+import com.aqlu.rocketmq.demo.domain.OrderPaidEvent;
+import com.maihaoche.starter.mq.annotation.EnableMQConfiguration;
+import com.maihaoche.starter.mq.base.MessageBuilder;
 
 /**
  * ProducerApplication Created by aqlu on 2017/11/16.
  */
+@EnableMQConfiguration
 @SpringBootApplication
 public class ProducerApplication implements CommandLineRunner {
-    @Resource
-    private RocketMQTemplate rocketMQTemplate;
+
+    @Autowired
+    private DemoProducer demoProducer;
 
     public static void main(String[] args) {
         SpringApplication.run(ProducerApplication.class, args);
@@ -24,17 +29,12 @@ public class ProducerApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // send string
-        rocketMQTemplate.convertAndSend("string-topic", "Hello, World!");
+        // Message message = new Message("string-topic", "{\"a\":\"Hello, World!\"}".getBytes());
 
-        // send string with spring Message
-        rocketMQTemplate.send("string-topic", MessageBuilder.withPayload("Hello, World! I'm from spring message").build());
+        OrderPaidEvent event = new OrderPaidEvent("1", BigDecimal.valueOf(10.0));
+        Message message = MessageBuilder.of(event).topic("string-topic").build();
 
-        // send user-defined object
-        rocketMQTemplate.convertAndSend("order-paid-topic", new OrderPaidEvent("T_001", new BigDecimal("88.00")));
-
-        // send message with special tag
-        rocketMQTemplate.convertAndSend("message-ext-topic:tag0", "I'm from tag0"); //not be consume
-        rocketMQTemplate.convertAndSend("message-ext-topic:tag1", "I'm from tag1");
+        demoProducer.syncSend(message);
     }
 
 }
