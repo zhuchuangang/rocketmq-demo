@@ -28,12 +28,27 @@ public class ProducerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // send string
-        // Message message = new Message("string-topic", "{\"a\":\"Hello, World!\"}".getBytes());
+        // send string 不支持发送字符
+        Message message = new Message("string-topic", "Hello, World!".getBytes());
+        demoProducer.syncSend(message);
 
+        // send string 支持json字符串
+        message = new Message("string-topic", "{\"test\":\"Hello, World!\"}".getBytes());
+        demoProducer.syncSend(message);
+
+        // send object
         OrderPaidEvent event = new OrderPaidEvent("1", BigDecimal.valueOf(10.0));
-        Message message = MessageBuilder.of(event).topic("string-topic").build();
+        message = MessageBuilder.of(event).topic("order-paid-topic").build();
+        demoProducer.syncSend(message);
 
+        // send object
+        event = new OrderPaidEvent("2", BigDecimal.valueOf(20.0));
+        message = MessageBuilder.of(event).topic("order-paid-topic").tag("test").build();
+        demoProducer.syncSend(message);
+
+        // send object
+        event = new OrderPaidEvent("3", BigDecimal.valueOf(30.0));
+        message = MessageBuilder.of(event).topic("message-ext-topic").tag("test1").build();
         demoProducer.syncSend(message);
     }
 

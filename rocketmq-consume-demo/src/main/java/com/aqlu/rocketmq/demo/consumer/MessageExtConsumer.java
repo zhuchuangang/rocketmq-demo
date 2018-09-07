@@ -10,13 +10,13 @@ import com.maihaoche.starter.mq.base.AbstractMQPushConsumer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * com.maihaoche的rocketmq插件不支持直接接受String类型，com.maihaoche.starter.mq.base.AbstractMQConsumer.parseMessage方法没有
- * 对String类型进行判断
+ * @author 鼠笑天
+ * @date 2018/9/7
  */
 @Slf4j
 @Service
-@MQConsumer(topic = "string-topic", consumerGroup = "string_consumer")
-public class StringConsumer extends AbstractMQPushConsumer {
+@MQConsumer(topic = "message-ext-topic", tag = {"test"}, consumerGroup = "message-ext-consumer")
+public class MessageExtConsumer extends AbstractMQPushConsumer {
 
     @Override
     public boolean process(Object message, Map extMap) {
